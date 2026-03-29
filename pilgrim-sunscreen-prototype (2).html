@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Pilgrim Sunscreen</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --teal: #2A8B8B; --teal-light: #E8F5F5;
+    --orange: #E8873A; --orange-light: #FFF0E6;
+    --dark: #1A1A1A; --mid: #444; --light: #999;
+    --border: #EAEAEA; --sand: #F5EFE6; --cream: #FAFAFA;
+    --green: #2E7D52; --green-light: #E8F5EE; --gold: #C9922A;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--dark); max-width: 430px; margin: 0 auto; }
+
+  .top-bar { position: sticky; top: 0; z-index: 100; background: #fff; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; }
+  .top-bar .brand { font-family: 'Playfair Display', serif; font-size: 17px; color: var(--teal); }
+  .top-bar svg { width: 20px; height: 20px; stroke: var(--dark); fill: none; stroke-width: 1.8; }
+
+  .img-wrap { background: linear-gradient(150deg, #C8E8E8 0%, #EDE6D8 60%, #FFE0C0 100%); height: 230px; display: flex; align-items: center; justify-content: center; position: relative; }
+  .pill { width: 108px; height: 182px; background: linear-gradient(170deg, #2A8B8B, #3AACAC 40%, #EDE6D8); border-radius: 54px 54px 34px 34px; display: flex; flex-direction: column; align-items: center; padding-top: 15px; box-shadow: 0 14px 36px rgba(42,139,139,.3); }
+  .pill .badge { width: 42px; height: 42px; border-radius: 50%; background: conic-gradient(var(--orange), #F5B85A, var(--orange)); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .pill .badge span:first-child { font-size: 5px; font-weight: 800; color: #fff; letter-spacing: 1px; }
+  .pill .badge span:last-child { font-size: 11px; font-weight: 900; color: #fff; }
+  .pill .bl { font-size: 7px; font-weight: 700; color: rgba(255,255,255,.8); letter-spacing: 2px; margin-top: 5px; }
+  .chip { position: absolute; top: 10px; left: 10px; display: flex; gap: 5px; }
+  .chip span { font-size: 10px; font-weight: 700; padding: 3px 7px; border-radius: 20px; }
+  .chip .off { background: var(--orange); color: #fff; }
+  .chip .choice { background: #222; color: #fff; }
+  .dots { display: flex; gap: 5px; justify-content: center; padding: 7px 0 3px; background: #fff; }
+  .dots span { width: 5px; height: 5px; border-radius: 50%; background: var(--border); }
+  .dots span.a { background: var(--teal); width: 14px; border-radius: 3px; }
+
+  .info { background: #fff; padding: 11px 16px 13px; }
+  .brand-tag { font-size: 11px; font-weight: 600; color: var(--teal); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 4px; }
+  .title { font-size: 13.5px; font-weight: 600; line-height: 1.4; margin-bottom: 7px; }
+  .rat-row { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; }
+  .stars { color: var(--gold); font-size: 12px; }
+  .rnum { font-weight: 700; font-size: 13px; }
+  .rcnt { font-size: 11px; color: var(--light); text-decoration: underline; }
+  .btag { margin-left: auto; font-size: 10px; font-weight: 700; color: var(--green); background: var(--green-light); padding: 2px 7px; border-radius: 20px; }
+  .price-row { display: flex; align-items: baseline; gap: 7px; }
+  .price { font-size: 23px; font-weight: 800; }
+  .orig { font-size: 13px; color: var(--light); text-decoration: line-through; }
+  .save-tag { font-size: 12px; font-weight: 700; color: var(--orange); }
+  .tax { font-size: 11px; color: var(--light); margin-top: 2px; }
+
+  .div { height: 6px; background: var(--sand); }
+
+  /* COLLAPSIBLE */
+  .collapse-wrap { background: #fff; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .collapse-trigger { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; user-select: none; }
+  .ct-title { font-size: 13px; font-weight: 700; color: var(--dark); }
+  .ct-sub { font-size: 11px; color: var(--light); margin-top: 1px; }
+  .chevron { width: 13px; height: 13px; border-right: 2px solid var(--light); border-bottom: 2px solid var(--light); transform: rotate(45deg); transition: transform .25s; margin-bottom: 3px; flex-shrink: 0; }
+  .collapse-trigger.open .chevron { transform: rotate(-135deg); margin-bottom: -3px; }
+  .collapse-body { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
+  .collapse-body.open { max-height: 2000px; }
+  .collapse-inner { padding: 10px 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+
+  /* ── GRAPHIC CARDS ── */
+  .gcard { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+
+  /* SPF CARD */
+  .spf-card { background: linear-gradient(135deg, #FFF8F0 0%, #FFF0E0 100%); padding: 14px; }
+  .gcard-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--orange); margin-bottom: 8px; }
+  .spf-visual { display: flex; align-items: flex-end; gap: 6px; margin-bottom: 10px; }
+  .spf-col { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+  .spf-bar-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 60px; }
+  .spf-bar { width: 100%; border-radius: 4px 4px 0 0; }
+  .spf-num { font-size: 9px; font-weight: 800; color: var(--mid); }
+  .spf-pct { font-size: 10px; font-weight: 800; }
+  .spf-bottom-label { font-size: 10px; font-weight: 700; color: #fff; background: var(--orange); border-radius: 20px; padding: 3px 10px; width: 100%; text-align: center; }
+  .spf-tagline { font-size: 12px; font-weight: 700; color: var(--dark); text-align: center; }
+  .spf-tagline span { color: var(--orange); }
+
+  /* PA CARD */
+  .pa-card { background: linear-gradient(135deg, #F0F8F8 0%, #E0F4F4 100%); padding: 14px; }
+  .pa-visual { display: flex; gap: 5px; margin-bottom: 10px; align-items: stretch; }
+  .pa-seg-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .pa-seg-bar { width: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: rgba(255,255,255,0.6); }
+  .pa-seg-bar.active { color: #fff; }
+  .pa-seg-name { font-size: 9px; font-weight: 700; color: var(--mid); }
+  .pa-seg-name.active { color: var(--teal); font-weight: 800; }
+  .pa-tagline { font-size: 12px; font-weight: 700; color: var(--dark); text-align: center; }
+  .pa-tagline span { color: var(--teal); }
+
+  /* UV CARD */
+  .uv-card { background: linear-gradient(135deg, #F2F8F2 0%, #E4F4E4 100%); padding: 14px; }
+  .uv-scene { display: flex; justify-content: space-around; align-items: flex-end; margin-bottom: 10px; gap: 8px; }
+  .uv-source { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; }
+  .uv-icon-wrap { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .uv-badge { font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 20px; text-align: center; }
+  .uv-badge.covered { background: var(--green); color: #fff; }
+  .uv-badge.not { background: #F0F0F0; color: var(--light); }
+  .uv-name { font-size: 10px; font-weight: 600; color: var(--mid); text-align: center; }
+  .uv-vs { font-size: 11px; font-weight: 800; color: var(--light); align-self: center; flex-shrink: 0; }
+  .uv-tagline { font-size: 12px; font-weight: 700; color: var(--dark); text-align: center; }
+  .uv-tagline span { color: var(--green); }
+
+  /* MENTIONS */
+  .mentions-wrap { display: flex; flex-wrap: wrap; gap: 5px; }
+  .mini-label { font-size: 10px; font-weight: 700; color: var(--light); text-transform: uppercase; letter-spacing: .6px; }
+  .mtag { display: flex; align-items: center; gap: 4px; padding: 4px 9px; border-radius: 20px; background: var(--green-light); border: 1px solid #B8E2CA; font-size: 11px; font-weight: 500; color: var(--green); }
+  .mtag .cnt { background: var(--green); color: #fff; font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 10px; }
+
+  /* OFFERS */
+  .sec { background: #fff; padding: 11px 16px; }
+  .sec-label { font-size: 12px; font-weight: 700; margin-bottom: 7px; }
+  .offer-item { display: flex; gap: 8px; padding: 8px 10px; border-radius: 8px; background: var(--orange-light); border: 1px solid #FDDBB5; margin-bottom: 6px; align-items: flex-start; }
+  .offer-item .ic { font-size: 14px; flex-shrink: 0; }
+  .offer-item .ot { font-size: 11px; line-height: 1.4; }
+  .code { display: inline-block; margin-top: 2px; background: #fff; border: 1.5px dashed var(--orange); font-size: 10px; font-weight: 800; color: var(--orange); padding: 1px 6px; border-radius: 4px; letter-spacing: 1px; }
+
+  .inner-div { height: 1px; background: var(--border); }
+
+  .cta-bar { position: sticky; bottom: 0; z-index: 100; background: #fff; border-top: 1px solid var(--border); padding: 10px 16px; display: flex; gap: 8px; }
+  .btn-w { width: 44px; border: 1.5px solid var(--border); background: #fff; border-radius: 10px; font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .btn-c { flex: 1; background: var(--teal); color: #fff; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; border: none; border-radius: 10px; padding: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(42,139,139,.3); }
+  .spacer { height: 68px; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+  <span class="brand">pilgrim</span>
+  <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+</div>
+
+<div class="img-wrap">
+  <div class="chip">
+    <span class="off">27% OFF</span>
+    <span class="choice">🏆 Choice</span>
+  </div>
+  <div class="pill">
+    <div class="badge"><span>SPF</span><span>50+</span></div>
+    <div class="bl">pilgrim</div>
+  </div>
+</div>
+<div class="dots"><span class="a"></span><span></span><span></span><span></span></div>
+
+<div class="info">
+  <div class="brand-tag">Pilgrim</div>
+  <div class="title">5% Vitamin C Brightening Serum Sunscreen SPF 50+ PA++++ — Lightweight · No White Cast · All Skin Types</div>
+  <div class="rat-row">
+    <span class="stars">★★★★</span>
+    <span class="rnum">4.2</span>
+    <span class="rcnt">(1,244)</span>
+    <span class="btag">7K+ bought</span>
+  </div>
+  <div class="price-row">
+    <span class="price">₹499</span>
+    <span class="orig">₹680</span>
+    <span class="save-tag">27% off</span>
+  </div>
+  <div class="tax">Incl. all taxes · Free delivery</div>
+</div>
+
+<!-- COLLAPSIBLE -->
+<div class="collapse-wrap">
+  <div class="collapse-trigger" id="t1" onclick="toggle()">
+    <div>
+      <div class="ct-title">👀 Will this work for me?</div>
+      <div class="ct-sub">7,000+ people found this helpful</div>
+    </div>
+    <div class="chevron"></div>
+  </div>
+
+  <div class="collapse-body" id="body1">
+    <div class="collapse-inner">
+
+      <div class="mini-label">What 1,244 customers say</div>
+      <div class="mentions-wrap" style="margin-bottom:4px">
+        <div class="mtag">Quality <span class="cnt">103</span></div>
+        <div class="mtag">Lightweight <span class="cnt">83</span></div>
+        <div class="mtag">No white cast <span class="cnt">81</span></div>
+        <div class="mtag">Sun protection <span class="cnt">60</span></div>
+        <div class="mtag">Non-greasy <span class="cnt">44</span></div>
+      </div>
+
+      <div class="inner-div"></div>
+
+      <!-- SPF GRAPHIC -->
+      <div class="gcard">
+        <div class="spf-card">
+          <div class="gcard-label">☀️ SPF 50+ — Tanning & Burn Shield</div>
+          <div style="display:flex;gap:6px;margin-bottom:4px">
+
+            <div style="flex:1;border-radius:8px;overflow:hidden;border:1px solid #E8D5C0">
+              <div style="background:#FDECD8;padding:8px 0;text-align:center;font-size:11px;font-weight:700;color:#C0856A">SPF 15</div>
+              <div style="background:#F5C9A8;padding:12px 6px;text-align:center">
+                <div style="font-size:20px;font-weight:800;color:#A06040">93%</div>
+              </div>
+            </div>
+
+            <div style="flex:1;border-radius:8px;overflow:hidden;border:1px solid #D8C8B0">
+              <div style="background:#F5E4CC;padding:8px 0;text-align:center;font-size:11px;font-weight:700;color:#A07840">SPF 30</div>
+              <div style="background:#E8C078;padding:12px 6px;text-align:center">
+                <div style="font-size:20px;font-weight:800;color:#7A5820">97%</div>
+              </div>
+            </div>
+
+            <div style="flex:1;border-radius:8px;overflow:hidden;border:2px solid var(--orange);box-shadow:0 0 0 3px rgba(232,135,58,.15)">
+              <div style="background:var(--orange);padding:8px 0;text-align:center;font-size:11px;font-weight:800;color:#fff">SPF 50+ ✦</div>
+              <div style="background:var(--orange);padding:12px 6px 6px;text-align:center;border-top:1px solid rgba(255,255,255,.25)">
+                <div style="font-size:22px;font-weight:900;color:#fff">98%</div>
+                <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.9);margin-top:4px;background:rgba(0,0,0,.12);border-radius:20px;padding:2px 8px;display:inline-block;white-space:nowrap">Vitamin C Sunscreen</div>
+              </div>
+            </div>
+
+          </div>
+          <div class="spf-tagline">Blocks <span>98% of rays</span> that cause tanning & burns</div>
+        </div>
+      </div>
+
+      <!-- PA GRAPHIC: horizontal shield track -->
+      <div class="gcard">
+        <div class="pa-card">
+          <div class="gcard-label" style="color:var(--teal)">🌗 PA++++ — Ageing & Dark Spot Guard</div>
+
+          <div style="margin-bottom:10px">
+            <!-- track -->
+            <div style="display:flex;gap:4px;align-items:stretch;margin-bottom:10px">
+              <div style="flex:1;background:#D8EDED;border-radius:5px;display:flex;align-items:center;justify-content:center;padding:12px 0">
+                <span style="font-size:10px;font-weight:700;color:#7AACAC">PA+</span>
+              </div>
+              <div style="flex:1;background:#A8D0D0;border-radius:5px;display:flex;align-items:center;justify-content:center;padding:12px 0">
+                <span style="font-size:10px;font-weight:700;color:#4A8888">PA++</span>
+              </div>
+              <div style="flex:1;background:#6AACAC;border-radius:5px;display:flex;align-items:center;justify-content:center;padding:12px 0">
+                <span style="font-size:10px;font-weight:700;color:#fff">PA+++</span>
+              </div>
+              <div style="flex:1;background:var(--teal);border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:10px 4px;box-shadow:0 0 0 2px var(--teal),0 0 0 4px rgba(42,139,139,.2)">
+                <span style="font-size:10px;font-weight:800;color:#fff">PA++++</span>
+                <span style="font-size:7.5px;font-weight:700;color:rgba(255,255,255,.9);background:rgba(0,0,0,.15);border-radius:20px;padding:1px 6px;white-space:nowrap">Vit C Sunscreen</span>
+              </div>
+            </div>
+            <!-- labels -->
+            <div style="display:flex">
+              <div style="flex:1;text-align:center;font-size:9px;color:#aaa">Low</div>
+              <div style="flex:1;text-align:center;font-size:9px;color:#aaa">Medium</div>
+              <div style="flex:1;text-align:center;font-size:9px;color:#aaa">High</div>
+              <div style="flex:1.3;text-align:center;font-size:9px;color:var(--teal);font-weight:700">Highest</div>
+            </div>
+          </div>
+
+          <div class="pa-tagline">Highest rated — <span>stops dark spots & early ageing</span></div>
+        </div>
+      </div>
+
+      <!-- UV CARD: clean minimal rows, no emoji icons -->
+      <div class="gcard">
+        <div class="uv-card">
+          <div class="gcard-label" style="color:var(--green)">🛡️ New Gen UV — Protects Everywhere</div>
+
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">
+
+            <div style="display:flex;border-radius:7px;overflow:hidden;font-size:11px;font-weight:600">
+              <div style="flex:1;background:#F0F0F0;color:#999;padding:8px 10px;text-align:center">Regular Sunscreen</div>
+              <div style="flex:1;background:var(--green-light);color:var(--green);padding:8px 10px;text-align:center;border-left:2px solid #fff">This Sunscreen</div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
+              <div style="background:var(--green-light);border-radius:7px;padding:8px 10px;font-size:11px;color:var(--green);font-weight:600">Outdoor rays ✓</div>
+              <div style="background:var(--green-light);border-radius:7px;padding:8px 10px;font-size:11px;color:var(--green);font-weight:600">Outdoor rays ✓</div>
+              <div style="background:#F8F8F8;border-radius:7px;padding:8px 10px;font-size:11px;color:#bbb">No indoor cover</div>
+              <div style="background:var(--green-light);border-radius:7px;padding:8px 10px;font-size:11px;color:var(--green);font-weight:600">Indoor light ✓</div>
+              <div style="background:#F8F8F8;border-radius:7px;padding:8px 10px;font-size:11px;color:#bbb">No screen cover</div>
+              <div style="background:var(--green-light);border-radius:7px;padding:8px 10px;font-size:11px;color:var(--green);font-weight:600">Screen light ✓</div>
+            </div>
+
+          </div>
+
+          <div class="uv-tagline"><span>You're covered 24/7</span> — indoors, outdoors, everywhere</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="div"></div>
+
+<div class="sec">
+  <div class="sec-label">🎁 Offers</div>
+  <div class="offer-item">
+    <div class="ic">🏦</div>
+    <div class="ot"><strong>10% off</strong> on HDFC Bank Cards. Min ₹3,000. <span class="code">HDFC10</span></div>
+  </div>
+  <div class="offer-item">
+    <div class="ic">✂️</div>
+    <div class="ot"><strong>Extra 5%</strong> on first Subscribe & Save. <span class="code">SUBSAVE5</span></div>
+  </div>
+</div>
+
+<div class="spacer"></div>
+
+<div class="cta-bar">
+  <button class="btn-w">🤍</button>
+  <button class="btn-c">Add to Cart — ₹499</button>
+</div>
+
+<script>
+  let isOpen = false;
+  function toggle() {
+    isOpen = !isOpen;
+    document.getElementById('body1').classList.toggle('open', isOpen);
+    document.getElementById('t1').classList.toggle('open', isOpen);
+  }
+</script>
+</body>
+</html>
